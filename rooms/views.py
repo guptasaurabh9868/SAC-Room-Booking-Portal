@@ -2,6 +2,7 @@ from rooms.models import Room
 from rooms.serializers import RoomSerializer
 from rest_framework import generics
 from django.http import Http404
+from rest_framework import permissions
 
 class RoomList(generics.ListCreateAPIView):
     """
@@ -9,6 +10,7 @@ class RoomList(generics.ListCreateAPIView):
     """
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 class RoomDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -17,4 +19,5 @@ class RoomDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
     lookup_field = 'number'
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)    
 

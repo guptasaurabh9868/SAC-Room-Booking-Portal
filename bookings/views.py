@@ -1,8 +1,12 @@
 from bookings.models import Booking
-from bookings.serializers import BookingSerilizer
+from bookings.serializers import BookingSerilizer, UserSerializer
 from rest_framework import generics
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from rooms.models import Room
+from django.contrib.auth.models import User
+from rest_framework import permissions
+from bookings.permissions import IsOwnerOrReadOnly
 
 class BookingList(generics.ListCreateAPIView):
     """
@@ -10,11 +14,12 @@ class BookingList(generics.ListCreateAPIView):
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerilizer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    # def perform_create(self, serializer):
-    #     print(self.request.data)
-    #     room = Room.objects.get(pk=self.request.data['room'])
-    #     serializer.save(room=room)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        print(self.request.user)
+        print(serializer.data)
 
 class BookingDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -22,4 +27,14 @@ class BookingDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerilizer
-    # lookup_field = 'number'
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly, 
+        IsOwnerOrReadOnly,)
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

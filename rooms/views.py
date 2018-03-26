@@ -3,21 +3,15 @@ from rooms.serializers import RoomSerializer
 from rest_framework import generics
 from django.http import Http404
 from rest_framework import permissions
+from rest_framework import viewsets
 
-class RoomList(generics.ListCreateAPIView):
+class RoomViewSet(viewsets.ModelViewSet):
     """
-    List all rooms, or create a new room if POST request.
+    List all bookings, create, retrieve, update
+    and destroy a room
     """
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-class RoomDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update or delete a room
-    """
-    queryset = Room.objects.all()
-    serializer_class = RoomSerializer
     lookup_field = 'number'
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)    
-
+    

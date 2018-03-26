@@ -3,7 +3,7 @@ from bookings.models import Booking
 from rooms.models import Room
 from django.contrib.auth.models import User
 
-class BookingSerilizer(serializers.ModelSerializer):
+class BookingSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:

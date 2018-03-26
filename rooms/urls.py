@@ -1,10 +1,10 @@
-from django.conf.urls import url
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.conf.urls import url, include
 from rooms import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'rooms', views.RoomViewSet)
 
 urlpatterns = [
-    url(r'^rooms/$', views.RoomList.as_view()),
-    url(r'^rooms/(?P<number>[0-9]+)/$', views.RoomDetail.as_view()),
+    url(r'^', include(router.urls))
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,12 +1,11 @@
-from django.conf.urls import url
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.conf.urls import url, include
+from rest_framework.routers import DefaultRouter
 from bookings import views
 
-urlpatterns = [
-    url(r'^bookings/$', views.BookingList.as_view()),
-    url(r'^bookings/(?P<pk>[0-9]+)/$', views.BookingDetail.as_view()),
-    url(r'^users/$', views.UserList.as_view()),
-    url(r'^users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
-]
+router = DefaultRouter()
+router.register(r'bookings', views.BookingViewSet)
+router.register(r'users', views.UserViewSet)
 
-urlpatterns = format_suffix_patterns(urlpatterns)
+urlpatterns = [
+    url(r'^', include(router.urls))
+]

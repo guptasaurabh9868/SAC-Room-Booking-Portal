@@ -48,6 +48,12 @@
                     <li><a href="{% url 'authentication:signup' %}">Signup</a></li>
                 {% endif %}
             </ul>
+            <ul class="right">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'bookings:show-bookings' %}">Bookings</a></li>
+                    <li class="active"><a href="{% url 'home' %}">Hello, {{ user.name }}</a></li>
+                {% endif %}
+            </ul>
         </div>
     </nav>
     <div class="container">    

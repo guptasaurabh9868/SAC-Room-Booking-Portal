@@ -72,13 +72,13 @@ def create_booking(request):
             if booking_from > booking_to:
                 return render(request, 'bookings/create_booking.html', {'form': form, 'msg': 'Invalid date range'})
 
-            for booking in Booking.objects.filter(room_id=room):
+            for booking in Booking.objects.filter(room_id=room, approved=True):
                 curr_booking_from = booking.booking_from
                 curr_booking_to = booking.booking_to
 
                 # check if bookings overlap
                 if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
-                    return render(request, 'bookings/create_booking.html', {'form': form, 'booking': booking, 'msg': 'Conflicts with following booking:'})
+                    return render(request, 'bookings/create_booking.html', {'form': form, 'booking': [booking], 'msg': 'Conflicts with following booking:'})
             
             Booking(booking_from=booking_from, booking_to=booking_to, room_id=room, account=request.user).save()
             return HttpResponseRedirect('/bookings')

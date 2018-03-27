@@ -26,27 +26,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col s6">
-            {{ msg }}
-        </div>
-    </div>
-
     {% if booking %}
-        <div class="row">
-            <div class="col s6">
-                <ul class="collection">
-                    <li class="collection-item">
-                        <span class="title">
-                            {{ booking.account.name }}
-                        </span>
-                        <p><b>From:</b> {{ booking.booking_from|date:"M d, Y g:m A" }} <br>
-                        <b>To:</b> {{ booking.booking_to|date:"M d, Y g:m A"}} <br>
-                        <b>Room:</b> {{ booking.room_id }}                    
-                        </p>
-                    </li>
-                </ul>
-            </div>
+        {% include 'bookings/booking.html' with bookings=booking title=msg %}
     {% endif %}
-    </div>
 {% endblock %}

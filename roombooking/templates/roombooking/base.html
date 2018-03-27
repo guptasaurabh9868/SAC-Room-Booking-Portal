@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<html>
+
+<head>
+    <title>SAC Room Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        #user-info {
+            margin-top: 20px;
+            padding-left: 15px;
+            border: 1px gray solid;
+            border-radius: 15px;
+            height: 70px;
+        }
+        #user-info h4 {
+            border-right: 1px gray solid;
+        }
+        .inline-icon {
+            vertical-align: bottom;
+            font-size: 18px !important;
+        }
+        .follow i {
+            margin-top: 13px;
+            font-size: 40px;
+        }
+        .followers {
+            margin-top: 23px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="/" class="brand-logo center">SAC Room Booking</a>
+            <ul class="left">
+                {% if user.is_authenticated %}
+                    <li class="active"><a href="{% url 'authentication:logout' %}">Logout</a></li> 
+                    <li><a href="{% url 'bookings:create-booking' %}">Create Booking</a></li>               
+                {% else %}
+                    <li><a href="{% url 'authentication:login' %}">Login</a></li>
+                    <li><a href="{% url 'authentication:signup' %}">Signup</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="container">    
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+
+</html>

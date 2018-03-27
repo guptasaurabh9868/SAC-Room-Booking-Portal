@@ -6,6 +6,6 @@ router = DefaultRouter()
 router.register(r'accounts', views.AccountViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls))
+    url(r'^api/', include(router.urls))
 ]
 

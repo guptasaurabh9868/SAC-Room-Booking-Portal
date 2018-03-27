@@ -6,5 +6,5 @@ router = DefaultRouter()
 router.register(r'rooms', views.RoomViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls))
+    url(r'^api/', include(router.urls))
 ]

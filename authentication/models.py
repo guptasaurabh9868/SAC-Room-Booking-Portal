@@ -8,10 +8,11 @@ class AccountManager(BaseUserManager):
 
         if not kwargs.get('username'):
                     raise ValueError('Users must have a valid username.')
-                    
+
         account = self.model(
             email=self.normalize_email(email),
-            username=kwargs.get('username')
+            username=kwargs.get('username'),
+            name=kwargs.get('name')
         )
 
         account.set_password(password)
@@ -39,9 +40,10 @@ class Account(AbstractBaseUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=40, unique=True)
 
-    name = models.CharField(max_length=40, blank=True)
+    name = models.CharField(max_length=40)
     is_admin = models.BooleanField(default=False)
     is_gsec = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

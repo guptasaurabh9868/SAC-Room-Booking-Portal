@@ -29,6 +29,9 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking_from = serializer.validated_data['booking_from']
         booking_to = serializer.validated_data['booking_to']
 
+        if booking_from > booking_to:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+
         bookings = Booking.objects.filter(room_id=serializer.validated_data['room_id'])
         
         for booking in bookings:

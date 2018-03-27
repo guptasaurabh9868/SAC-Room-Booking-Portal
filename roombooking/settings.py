@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rooms.apps.RoomsConfig',
     'bookings.apps.BookingsConfig',
-    'authentication'
+    'authentication',
 ]
 
 MIDDLEWARE = [

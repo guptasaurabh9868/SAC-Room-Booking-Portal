@@ -13,11 +13,15 @@ class AccountSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at', 'updated_at')
 
         def create(self, validated_data):
+            print(validated_data)
             return Account.objects.create(**validated_data)
 
         def update(self, instance, validated_data):
             instance.name = validated_data.get('name', instance.name)
             instance.username = validated_data.get('username', instance.username)
+            instance.is_admin = validated_data.get('is_admin', instance.is_admin)
+            instance.is_gsec = validated_data.get('is_admin', instance.is_gsec)
+            instance.is_verified = validated_data.get('is_admin', instance.is_gsec)
 
             instance.save()
 

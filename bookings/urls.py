@@ -10,4 +10,5 @@ router.register(r'bookings', views.BookingViewSet)
 urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^bookings/create', views.create_booking, name='create-booking'),
+    url(r'^bookings/', views.show_bookings, name='show-bookings'),       
 ]

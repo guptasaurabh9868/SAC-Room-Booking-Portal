@@ -11,6 +11,6 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^auth/login/', views.account_login, name='login'),
     url(r'^auth/signup/', views.account_signup, name='signup'),
-    url(r'^auth/logout/', views.account_logout, name='logout'),    
+    url(r'^auth/logout/', views.account_logout, name='logout'), 
 ]
 

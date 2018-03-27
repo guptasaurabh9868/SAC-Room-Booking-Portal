@@ -25,14 +25,8 @@ class AccountManager(BaseUserManager):
         account = self.create_user(email, password, **kwargs)
 
         account.is_admin = True
-        account.save()
-
-        return account
-
-    def create_gsec_user(self, email, password, **kwargs):
-        account = self.create_user(email, password, **kwargs)
-
-        account.is_gsec = True
+        account.is_staff = True
+        account.is_superuser = True
         account.save()
 
         return account

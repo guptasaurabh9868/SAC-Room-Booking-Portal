@@ -14,4 +14,4 @@ class Booking(models.Model):
     #     super(Booking, self).save(*args, **kwargs)
 
     def __str__(self):
-        return ' '.join([self.room, self.booking_from, self.booking_to])
+        return ' '.join([str(self.room_id), str(self.booking_from), str(self.booking_to)])

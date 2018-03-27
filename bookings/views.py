@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework import status
 import dateutil.parser
+import pytz
 
 from django.shortcuts import render, HttpResponseRedirect
 from .forms import BookingForm
@@ -64,8 +65,8 @@ def create_booking(request):
         form = BookingForm(data=request.POST)
         if form.is_valid():
             booking = form.cleaned_data
-            booking_from = dateutil.parser.parse(booking['booking_from'])
-            booking_to = dateutil.parser.parse(booking['booking_to'])
+            booking_from = pytz.UTC.localize(dateutil.parser.parse(booking['booking_from']))
+            booking_to = pytz.UTC.localize(dateutil.parser.parse(booking['booking_to']))
             room = booking['room_id']
 
             if booking_from > booking_to:
@@ -77,7 +78,7 @@ def create_booking(request):
 
                 # check if bookings overlap
                 if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
-                    return render(request, 'bookings/create_booking.html', {'form': form, 'booking': booking})
+                    return render(request, 'bookings/create_booking.html', {'form': form, 'booking': booking, 'msg': 'Conflicts with following booking:'})
             
             Booking(booking_from=booking_from, booking_to=booking_to, room_id=room, account=request.user).save()
             return HttpResponseRedirect('/bookings')
@@ -87,3 +88,7 @@ def create_booking(request):
         form = BookingForm()
 
     return render(request, 'bookings/create_booking.html', {'form': form})
+
+def show_bookings(request):
+    bookings = Booking.objects.filter(account=request.user)
+    return render(request, 'bookings/show_bookings.html', {'bookings': bookings})

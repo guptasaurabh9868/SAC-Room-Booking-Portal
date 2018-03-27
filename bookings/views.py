@@ -9,6 +9,9 @@ from rest_framework.decorators import detail_route
 from rest_framework import status
 import dateutil.parser
 
+from django.shortcuts import render, HttpResponseRedirect
+from .forms import BookingForm
+
 class BookingViewSet(viewsets.ModelViewSet):
     """
     List all bookings, create, retrieve, update
@@ -55,3 +58,32 @@ class BookingViewSet(viewsets.ModelViewSet):
             return self.check_date_range_conflict(request, serializer)
 
     # TODO: Implement method to update booking dates
+
+def create_booking(request):
+    if request.method == 'POST':
+        form = BookingForm(data=request.POST)
+        if form.is_valid():
+            booking = form.cleaned_data
+            booking_from = dateutil.parser.parse(booking['booking_from'])
+            booking_to = dateutil.parser.parse(booking['booking_to'])
+            room = booking['room_id']
+
+            if booking_from > booking_to:
+                return render(request, 'bookings/create_booking.html', {'form': form, 'msg': 'Invalid date range'})
+
+            for booking in Booking.objects.filter(room_id=room):
+                curr_booking_from = booking.booking_from
+                curr_booking_to = booking.booking_to
+
+                # check if bookings overlap
+                if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
+                    return render(request, 'bookings/create_booking.html', {'form': form, 'booking': booking})
+            
+            Booking(booking_from=booking_from, booking_to=booking_to, room_id=room, account=request.user).save()
+            return HttpResponseRedirect('/bookings')
+        else:
+            return render(render(request, 'bookings/create_booking.html', {'form': form, 'msg': 'Form not valid!'}))        
+    else:
+        form = BookingForm()
+
+    return render(request, 'bookings/create_booking.html', {'form': form})

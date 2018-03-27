@@ -7,5 +7,5 @@ class Room(models.Model):
     class Meta:
         ordering = ('number',)
 
-    def __unicode__(self):
-        return ' '.join([self.number, self.name])
+    def __str__(self):
+        return ' '.join([str(self.number), '-', self.name])

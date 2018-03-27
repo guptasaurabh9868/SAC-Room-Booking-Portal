@@ -6,17 +6,18 @@
             <form method="POST">
                 {% csrf_token %}
                 <p>
-                    <label>Booking From</label>
-                    <input type="datetime-local" name="booking_from">
+                    <label for="id_booking_from">Booking from:</label> 
+                    <input type="datetime-local" name="booking_from" required id="id_booking_from" />
                 </p>
                 <p>
-                    <label>Booking To</label>
-                    <input type="datetime-local" name="booking_to">
+                    <label for="id_booking_to">Booking to:</label> 
+                    <input type="datetime-local" name="booking_to" required id="id_booking_to" />
                 </p>
                 <p>
                     <label for="id_room_id">Room</label>
                     {{ form.room_id }}
                 </p>
+                
                 <button class="btn waves-effect waves-light" type="submit" name="action">
                     Create
                     <i class="material-icons right">send</i>

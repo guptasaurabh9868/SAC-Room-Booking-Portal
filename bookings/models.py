@@ -13,5 +13,5 @@ class Booking(models.Model):
     # def save(self, *args, **kwargs):
     #     super(Booking, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return ' '.join([self.room, self.booking_from, self.booking_to])

@@ -1,7 +1,6 @@
 from bookings.models import Booking
-from bookings.serializers import BookingSerializer, UserSerializer
+from bookings.serializers import BookingSerializer
 from rooms.models import Room
-from django.contrib.auth.models import User
 from rest_framework import permissions
 from bookings.permissions import IsOwnerOrReadOnly
 from rest_framework import viewsets
@@ -21,7 +20,7 @@ class BookingViewSet(viewsets.ModelViewSet):
                           IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(account=self.request.user)
 
     # def get_parsed_date(self, date):
     #     return dateutil.parser.parse(date)
@@ -42,7 +41,7 @@ class BookingViewSet(viewsets.ModelViewSet):
             if (curr_booking_from <= booking_to and booking_to <= curr_booking_to):
                 return Response(BookingSerializer(booking).data, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        serializer.save(user=request.user)
+        serializer.save(account=request.user)
         return Response(serializer.data)
 
     def create(self, request, pk=None, format=None):
@@ -53,7 +52,3 @@ class BookingViewSet(viewsets.ModelViewSet):
             return self.check_date_range_conflict(request, serializer)
 
     # TODO: Implement method to update booking dates
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer

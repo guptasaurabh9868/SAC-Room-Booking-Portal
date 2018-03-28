@@ -1,5 +1,5 @@
 {% extends 'roombooking/base.html' %}
 
 {% block content %}
-    <h1>Home</h1>
+    {% include 'bookings/booking.html' with bookings=bookings title="All bookings" %}
 {% endblock %}

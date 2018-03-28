@@ -71,6 +71,9 @@ def get_conflicted_booking_or_false(booking):
         curr_booking_from = _booking.booking_from
         curr_booking_to = _booking.booking_to
 
+        if booking.id == _booking.id:
+            continue
+            
         # check if bookings overlap
         if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
             return _booking

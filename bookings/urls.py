@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^bookings/delete/(?P<pk>[0-9]+)/', views.delete_booking, name='delete-booking'),
     url(r'^bookings/approve/(?P<pk>[0-9]+)/', views.approve_booking, name='approve-booking'),
     url(r'^bookings/reject/(?P<pk>[0-9]+)/', views.reject_booking, name='reject-booking'),
+    url(r'^bookings/conflict/$', views.booking_conflict, name='booking-conflict'),
 ]

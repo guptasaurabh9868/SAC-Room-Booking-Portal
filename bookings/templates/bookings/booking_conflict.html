@@ -1,0 +1,9 @@
+{% extends 'roombooking/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            {% include 'bookings/booking.html' with bookings=bookings title="Following bookings conflicts with each other:" %}
+        </div>
+    </div>
+{% endblock %}

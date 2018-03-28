@@ -62,27 +62,42 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     # TODO: Implement method to update booking dates
 
+def get_conflicted_booking_or_false(booking):
+
+    booking_from = booking.booking_from
+    booking_to = booking.booking_to
+    
+    for _booking in Booking.objects.filter(room_id=booking.room_id, approved=True, rejected=False):
+        curr_booking_from = _booking.booking_from
+        curr_booking_to = _booking.booking_to
+
+        # check if bookings overlap
+        if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
+            return _booking
+    
+    return False
+
 def create_booking(request):
     if request.method == 'POST':
         form = BookingForm(data=request.POST)
         if form.is_valid():
-            booking = form.cleaned_data
-            booking_from = pytz.UTC.localize(dateutil.parser.parse(booking['booking_from']))
-            booking_to = pytz.UTC.localize(dateutil.parser.parse(booking['booking_to']))
-            room = booking['room_id']
+            booking = form.save(commit=False)
 
-            if booking_from > booking_to:
+            # TODO: Check if booking date/time is not before current date/time
+
+            if booking.booking_from > booking.booking_to:
                 return render(request, 'bookings/create_booking.html', {'form': form, 'msg': 'Invalid date range'})
 
-            for booking in Booking.objects.filter(room_id=room, approved=True):
-                curr_booking_from = booking.booking_from
-                curr_booking_to = booking.booking_to
+            # _booking will be Booking object if there is a conflict
+            # or False otherwise
+            _booking = get_conflicted_booking_or_false(booking)
 
-                # check if bookings overlap
-                if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
-                    return render(request, 'bookings/create_booking.html', {'form': form, 'booking': [booking], 'msg': 'Conflicts with following booking:'})
+            if _booking != False:
+                return render(request, 'bookings/create_booking.html', {'form': form, 'booking': [_booking], 'msg': 'Conflicts with following booking:'})
             
-            Booking(booking_from=booking_from, booking_to=booking_to, room_id=room, account=request.user).save()
+            booking.account=request.user
+            booking.save()
+            
             return HttpResponseRedirect('/bookings')
         else:
             return render(render(request, 'bookings/create_booking.html', {'form': form, 'msg': 'Form not valid!'}))        
@@ -124,14 +139,29 @@ def delete_booking(request, pk):
 
 def approve_booking(request, pk):
     booking = Booking.objects.get(id=pk)
+
+    _booking = get_conflicted_booking_or_false(booking)
+
+    if _booking != False:
+        return HttpResponseRedirect('/bookings/conflict?id1=' + str(booking.id) + '&id2=' + str(_booking.id))
+
     booking.approved = True
+    booking.rejected = False
     booking.save()
-    send_email(request, "approved", booking)    
+    send_email(request, "approved", booking)  
+ 
     return HttpResponseRedirect('/bookings/')
+
+def booking_conflict(request):
+    booking1 = Booking.objects.get(id=request.GET.get('id1'))
+    booking2 = Booking.objects.get(id=request.GET.get('id2'))
+
+    return render(request, 'bookings/booking_conflict.html', {'bookings': [booking1, booking2]})
 
 def reject_booking(request, pk):
     booking = Booking.objects.get(id=pk)
     booking.rejected = True
+    booking.approved = False
     booking.save()
     send_email(request, "rejected", booking)    
     return HttpResponseRedirect('/bookings/')

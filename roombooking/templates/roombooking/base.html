@@ -32,32 +32,35 @@
         .followers {
             margin-top: 23px;
         }
+        .nav-logo {
+            font-size: 2em;
+            padding-left: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <nav>
+    <nav class="nav-extended">
+        <div class="nav-logo">
+            SAC Room Booking Portal           
+        </div>       
         <div class="nav-wrapper">
-            <a href="/" class="brand-logo center">SAC Room Booking</a>
-            <ul class="left">
+            <ul id="nav-mobile" class="right">
                 {% if user.is_authenticated %}
-                    <li class="active"><a href="{% url 'authentication:logout' %}">Logout</a></li> 
+                    <li><a href="{% url 'authentication:logout' %}">Logout</a></li> 
                     {% if not user.is_admin %}
                         <li><a href="{% url 'bookings:create-booking' %}">Create Booking</a></li>               
                     {% endif %}    
+                    <li><a href="{% url 'bookings:show-bookings' %}">Bookings</a></li>
+                    <li><a href="{% url 'home' %}">Hello, {{ user.name }}</a></li>
                 {% else %}
                     <li><a href="{% url 'authentication:login' %}">Login</a></li>
                     <li><a href="{% url 'authentication:signup' %}">Signup</a></li>
                 {% endif %}
-            </ul>
-            <ul class="right">
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'bookings:show-bookings' %}">Bookings</a></li>
-                    <li class="active"><a href="{% url 'home' %}">Hello, {{ user.name }}</a></li>
-                {% endif %}
-            </ul>
+            </ul>   
         </div>
     </nav>
+      
     <div class="container">    
         {% block content %}
         {% endblock %}

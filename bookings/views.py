@@ -95,3 +95,20 @@ def show_bookings(request):
     else:
         bookings = Booking.objects.filter(account=request.user)
     return render(request, 'bookings/show_bookings.html', {'bookings': bookings})
+
+def delete_booking(request, pk):
+    booking = Booking.objects.get(id=pk)
+    booking.delete()
+    return HttpResponseRedirect('/bookings/')
+
+def approve_booking(request, pk):
+    booking = Booking.objects.get(id=pk)
+    booking.approved = True
+    booking.save()
+    return HttpResponseRedirect('/bookings/')
+
+def reject_booking(request, pk):
+    booking = Booking.objects.get(id=pk)
+    booking.rejected = True
+    booking.save()
+    return HttpResponseRedirect('/bookings/')

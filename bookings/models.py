@@ -7,6 +7,7 @@ class Booking(models.Model):
     room_id = models.ForeignKey('rooms.Room', related_name='bookings', on_delete=models.CASCADE)
     account = models.ForeignKey('authentication.Account', related_name='bookings', on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
     
     class Meta:
         ordering = ['booking_from']

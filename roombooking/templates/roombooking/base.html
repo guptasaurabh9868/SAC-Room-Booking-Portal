@@ -46,9 +46,9 @@
         </div>       
         <div class="nav-wrapper">
             <ul id="nav-mobile" class="right">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated%}
                     <li><a href="{% url 'authentication:logout' %}">Logout</a></li> 
-                    {% if not user.is_admin %}
+                    {% if not user.is_admin and user.is_verified  %}
                         <li><a href="{% url 'bookings:create-booking' %}">Create Booking</a></li>               
                     {% endif %}    
                     <li><a href="{% url 'bookings:show-bookings' %}">Bookings</a></li>
@@ -61,7 +61,14 @@
         </div>
     </nav>
       
-    <div class="container">    
+    <div class="container">
+        {% if user.is_authenticated and not user.is_verified %}
+            <div class="row">
+                <div class="col s12">
+                    <h5>Your account is pending verification.</h5>
+                </div>
+            </div>    
+        {% endif %}
         {% block content %}
         {% endblock %}
     </div>

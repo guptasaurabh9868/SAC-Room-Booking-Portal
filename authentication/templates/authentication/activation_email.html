@@ -1,0 +1,11 @@
+{% autoescape off %}
+Hi {{ user }},
+
+Following independent body's registration requires approval:
+
+Name: {{ account.name }}
+Email: {{ account.email }}
+
+Please click on the link to approve it, 
+http://{{ domain }}{% url 'authentication:activate' uidb64=uid token=token %}
+{% endautoescape %}

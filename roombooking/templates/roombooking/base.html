@@ -42,7 +42,9 @@
             <ul class="left">
                 {% if user.is_authenticated %}
                     <li class="active"><a href="{% url 'authentication:logout' %}">Logout</a></li> 
-                    <li><a href="{% url 'bookings:create-booking' %}">Create Booking</a></li>               
+                    {% if not user.is_admin %}
+                        <li><a href="{% url 'bookings:create-booking' %}">Create Booking</a></li>               
+                    {% endif %}    
                 {% else %}
                     <li><a href="{% url 'authentication:login' %}">Login</a></li>
                     <li><a href="{% url 'authentication:signup' %}">Signup</a></li>

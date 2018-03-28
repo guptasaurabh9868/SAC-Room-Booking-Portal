@@ -90,5 +90,8 @@ def create_booking(request):
     return render(request, 'bookings/create_booking.html', {'form': form})
 
 def show_bookings(request):
-    bookings = Booking.objects.filter(account=request.user)
+    if request.user.is_admin:
+        bookings = Booking.objects.filter(approved=False)
+    else:
+        bookings = Booking.objects.filter(account=request.user)
     return render(request, 'bookings/show_bookings.html', {'bookings': bookings})

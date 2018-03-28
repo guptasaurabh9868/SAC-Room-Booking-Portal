@@ -8,10 +8,21 @@
                 {{ booking.account.name }}
             </span>
             <p><b>From:</b> {{ booking.booking_from|date:"M d, Y g:m A" }} <br>
-            <b>To:</b> {{ booking.booking_to|date:"M d, Y g:m A"}} <br>
-            <b>Room:</b> {{ booking.room_id }} <br>
-            <b>Status:</b> {% if booking.approved %} Approved {% else %} Pending Approval {% endif %}                    
+                <b>To:</b> {{ booking.booking_to|date:"M d, Y g:m A"}} <br>
+                <b>Room:</b> {{ booking.room_id }} <br>
+                <b>Status:</b> {% if booking.approved %} Approved {% else %} Pending Approval {% endif %}
             </p>
+            {% if user.is_admin %}
+                <a href="/bookings/approve/{{booking.id}}" style="color: rgb(117, 117, 117);">
+                    <i class="material-icons">done</i>
+                </a>
+                <a href="/bookings/reject/{{booking.id}}" style="color: rgb(117, 117, 117);">
+                    <i class="material-icons">clear</i>
+                </a>
+                <a href="/bookings/delete/{{booking.id}}" style="color: rgb(117, 117, 117);">
+                    <i class="material-icons">delete</i>
+                </a>
+            {% endif %}
         </li>
     {% endfor %}
 </ul>

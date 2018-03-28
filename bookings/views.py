@@ -12,6 +12,8 @@ import pytz
 
 from django.shortcuts import render, HttpResponseRedirect
 from .forms import BookingForm
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 
 class BookingViewSet(viewsets.ModelViewSet):
     """
@@ -91,13 +93,32 @@ def create_booking(request):
 
 def show_bookings(request):
     if request.user.is_admin:
-        bookings = Booking.objects.filter(approved=False)
+        bookings = Booking.objects.filter()
     else:
         bookings = Booking.objects.filter(account=request.user)
     return render(request, 'bookings/show_bookings.html', {'bookings': bookings})
 
+def send_email(request, status, booking):
+    if not request.user.is_admin:
+        return
+    subject = "SAC Room Booking status"
+
+    message = render_to_string('bookings/booking_email.html', {
+        'account': booking.account,
+        'booking': booking,
+        'status': status
+    })
+
+    to_email = booking.account.email
+    email = EmailMessage(
+        subject, message, to=[to_email]
+    )
+
+    email.send()
+
 def delete_booking(request, pk):
     booking = Booking.objects.get(id=pk)
+    send_email(request, "deleted", booking)
     booking.delete()
     return HttpResponseRedirect('/bookings/')
 
@@ -105,10 +126,12 @@ def approve_booking(request, pk):
     booking = Booking.objects.get(id=pk)
     booking.approved = True
     booking.save()
+    send_email(request, "approved", booking)    
     return HttpResponseRedirect('/bookings/')
 
 def reject_booking(request, pk):
     booking = Booking.objects.get(id=pk)
     booking.rejected = True
     booking.save()
+    send_email(request, "rejected", booking)    
     return HttpResponseRedirect('/bookings/')

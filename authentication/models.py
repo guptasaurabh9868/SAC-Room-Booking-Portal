@@ -27,6 +27,8 @@ class AccountManager(BaseUserManager):
         account.is_admin = True
         account.is_staff = True
         account.is_superuser = True
+        account.is_verified = True
+        account.is_active = True
         account.save()
 
         return account

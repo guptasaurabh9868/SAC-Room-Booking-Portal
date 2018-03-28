@@ -24,7 +24,7 @@
                     <i class="material-icons">clear</i>
                 </a>
             {% endif %}
-            {% if user == booking.account %}
+            {% if user == booking.account or user.is_admin %}
                 <a href="/bookings/delete/{{booking.id}}" style="color: rgb(117, 117, 117);">
                     <i class="material-icons">delete</i>
                 </a>

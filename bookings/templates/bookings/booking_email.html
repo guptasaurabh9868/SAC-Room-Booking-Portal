@@ -1,0 +1,11 @@
+{% autoescape off %}
+Hi {{ account.name }},
+
+Your booking:
+Room: {{ booking.room_id }}
+From: {{ booking.booking_from }}
+To: {{ booking.booking_to }}
+
+has been {{ status }} by the admin.
+
+{% endautoescape %}

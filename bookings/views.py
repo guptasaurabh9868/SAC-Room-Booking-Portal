@@ -1,3 +1,7 @@
+import httplib2
+import os
+import datetime
+
 from bookings.models import Booking
 from bookings.serializers import BookingSerializer
 from rooms.models import Room
@@ -14,6 +18,23 @@ from django.shortcuts import render, HttpResponseRedirect
 from .forms import BookingForm
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+
+from apiclient import discovery
+from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
+from decouple import config
+
+# For google calendar
+# try:
+#     import argparse
+#     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+# except ImportError:
+#     flags = None
+
+SCOPES = 'https://www.googleapis.com/auth/calendar'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'Google Calendar API (SAC Room Booking)'
 
 class BookingViewSet(viewsets.ModelViewSet):
     """
@@ -73,12 +94,69 @@ def get_conflicted_booking_or_false(booking):
 
         if booking.id == _booking.id:
             continue
-            
+
         # check if bookings overlap
         if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
             return _booking
     
     return False
+
+def get_google_calendar_credentials():
+    home_dir = os.path.expanduser('~')
+    credential_dir = os.path.join(home_dir, '.credentials')
+    if not os.path.exists(credential_dir):
+        os.makedirs(credential_dir)
+
+    credential_path = os.path.join(credential_dir,
+                                   'sac-room-booking-calendar.json')
+
+    store = Storage(credential_path)
+    credentials = store.get()
+
+    if not credentials or credentials.invalid:
+        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        flow.user_agent = APPLICATION_NAME
+        flags = tools.argparser.parse_args(args=[])
+        credentials = tools.run_flow(flow, store, flags)
+        print('Storing credentials to ' + credential_path)
+
+    return credentials
+
+def create_calendar_event(booking):
+    credentials = get_google_calendar_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('calendar', 'v3', http=http)
+
+    event = {
+        'summary': booking.account.name,
+        'location': str(booking.room_id),
+        'description': '',
+        'start': {
+            'dateTime': booking.booking_from.isoformat(),
+            'timeZone': 'Asia/Kolkata',
+        },
+        'end': {
+            'dateTime': booking.booking_to.isoformat(),
+            'timeZone': 'Asia/Kolkata',
+        },
+        'attendees': [
+            {'email': booking.account.email},
+        ],
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+            {'method': 'email', 'minutes': 24 * 60},
+            {'method': 'popup', 'minutes': 10},
+            ],
+        }
+    }
+
+    event = service.events().insert(
+        calendarId=config('CALENDAR_ID'),
+        body=event).execute()
+
+    print(event)
+    return event
 
 def create_booking(request):
     if request.method == 'POST':
@@ -150,6 +228,7 @@ def approve_booking(request, pk):
 
     booking.approved = True
     booking.rejected = False
+    event = create_calendar_event(booking)
     booking.save()
     send_email(request, "approved", booking)  
  

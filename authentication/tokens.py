@@ -2,7 +2,10 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import six
 
 class TokenGenerator(PasswordResetTokenGenerator):
-    def _make_hast_value(self, user, timestamp):
+    def _make_hash_value(self, user, timestamp):
+        print('user', user.username)
+        print('timestamp', timestamp)
+        print('is_verified', user.is_verified)
         return (
             six.text_type(user.pk) + six.text_type(timestamp) +
             six.text_type(user.is_verified)

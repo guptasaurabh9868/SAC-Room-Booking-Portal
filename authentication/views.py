@@ -95,8 +95,6 @@ def activate(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, Account.DoesNotExist):
         account = None
     
-    print(account)
-    print(account_activation_token.check_token(account, token))
     if account is not None and account_activation_token.check_token(account, token):
         account.is_active = True
         account.is_verified = True

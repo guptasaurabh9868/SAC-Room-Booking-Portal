@@ -6,12 +6,12 @@
             <form method="POST">
                 {% csrf_token %}
                 <p>
-                    <label for="id_booking_from">Booking from:</label> 
-                    <input type="datetime-local" name="booking_from" required id="id_booking_from" />
+                    <label for="id_start">Booking from:</label> 
+                    <input type="datetime-local" name="start" required id="id_start" />
                 </p>
                 <p>
-                    <label for="id_booking_to">Booking to:</label> 
-                    <input type="datetime-local" name="booking_to" required id="id_booking_to" />
+                    <label for="id_end">Booking to:</label> 
+                    <input type="datetime-local" name="end" required id="id_end" />
                 </p>
                 <p>
                     <label for="id_room_id">Room</label>

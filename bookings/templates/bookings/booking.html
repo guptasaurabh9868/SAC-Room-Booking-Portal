@@ -7,8 +7,8 @@
             <span class="title">
                 {{ booking.account.name }}
             </span>
-            <p><b>From:</b> {{ booking.booking_from|date:"M d, Y g:m A" }} <br>
-                <b>To:</b> {{ booking.booking_to|date:"M d, Y g:m A"}} <br>
+            <p><b>From:</b> {{ booking.start|date:"M d, Y g:m A" }} <br>
+                <b>To:</b> {{ booking.end|date:"M d, Y g:m A"}} <br>
                 <b>Room:</b> {{ booking.room_id }} <br>
                 <b>Status:</b>
                 {% if booking.rejected %} Rejected 

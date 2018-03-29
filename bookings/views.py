@@ -53,22 +53,22 @@ class BookingViewSet(viewsets.ModelViewSet):
     #     return dateutil.parser.parse(date)
 
     def check_date_range_conflict(self, request, serializer):
-        booking_from = serializer.validated_data['booking_from']
-        booking_to = serializer.validated_data['booking_to']
+        start = serializer.validated_data['start']
+        end = serializer.validated_data['end']
 
-        if booking_from > booking_to:
+        if start > end:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
 
         bookings = Booking.objects.filter(room_id=serializer.validated_data['room_id'])
         
         for booking in bookings:
-            curr_booking_from = booking.booking_from
-            curr_booking_to = booking.booking_to
+            curr_start = booking.start
+            curr_end = booking.end
 
-            if (curr_booking_from <= booking_from and booking_from <= curr_booking_to):
+            if (curr_start <= start and start <= curr_end):
                 return Response(BookingSerializer(booking).data, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-            if (curr_booking_from <= booking_to and booking_to <= curr_booking_to):
+            if (curr_start <= end and end <= curr_end):
                 return Response(BookingSerializer(booking).data, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         serializer.save(account=request.user)
@@ -85,18 +85,18 @@ class BookingViewSet(viewsets.ModelViewSet):
 
 def get_conflicted_booking_or_false(booking):
 
-    booking_from = booking.booking_from
-    booking_to = booking.booking_to
+    start = booking.start
+    end = booking.end
     
     for _booking in Booking.objects.filter(room_id=booking.room_id, approved=True, rejected=False):
-        curr_booking_from = _booking.booking_from
-        curr_booking_to = _booking.booking_to
+        curr_start = _booking.start
+        curr_end = _booking.end
 
         if booking.id == _booking.id:
             continue
 
         # check if bookings overlap
-        if booking_from <= curr_booking_to and curr_booking_from <= booking_to:
+        if start <= curr_end and curr_start <= end:
             return _booking
     
     return False
@@ -122,21 +122,26 @@ def get_google_calendar_credentials():
 
     return credentials
 
-def create_calendar_event(booking):
+def get_google_calendar_service():
     credentials = get_google_calendar_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
+
+    return service
+
+def create_calendar_event(booking):
+    service = get_google_calendar_service()
 
     event = {
         'summary': booking.account.name,
         'location': str(booking.room_id),
         'description': '',
         'start': {
-            'dateTime': booking.booking_from.isoformat(),
+            'dateTime': booking.start.isoformat(),
             'timeZone': 'Asia/Kolkata',
         },
         'end': {
-            'dateTime': booking.booking_to.isoformat(),
+            'dateTime': booking.end.isoformat(),
             'timeZone': 'Asia/Kolkata',
         },
         'attendees': [
@@ -155,7 +160,7 @@ def create_calendar_event(booking):
         calendarId=config('CALENDAR_ID'),
         body=event).execute()
 
-    print(event)
+    booking.googleCalendarEventId = event['id']
     return event
 
 def create_booking(request):
@@ -166,7 +171,7 @@ def create_booking(request):
 
             # TODO: Check if booking date/time is not before current date/time
 
-            if booking.booking_from > booking.booking_to:
+            if booking.start > booking.end:
                 return render(request, 'bookings/create_booking.html', {'form': form, 'msg': 'Invalid date range'})
 
             # _booking will be Booking object if there is a conflict
@@ -228,7 +233,7 @@ def approve_booking(request, pk):
 
     booking.approved = True
     booking.rejected = False
-    event = create_calendar_event(booking)
+    create_calendar_event(booking)
     booking.save()
     send_email(request, "approved", booking)  
  

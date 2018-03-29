@@ -2,9 +2,9 @@ from django import forms
 from .models import Booking
 
 class BookingForm(forms.ModelForm):
-    booking_from = forms.CharField()
-    booking_to = forms.CharField()
+    start = forms.CharField()
+    end = forms.CharField()
 
     class Meta:
         model = Booking
-        fields = ('booking_from', 'booking_to', 'room_id')
+        fields = ('start', 'end', 'room_id')

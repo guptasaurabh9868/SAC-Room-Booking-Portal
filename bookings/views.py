@@ -163,6 +163,14 @@ def create_calendar_event(booking):
     booking.googleCalendarEventId = event['id']
     return event
 
+def delete_google_calendar_event(booking):
+    service = get_google_calendar_service()
+
+    service.events().delete(
+        calendarId=config('CALENDAR_ID'),
+        eventId=booking.googleCalendarEventId
+    ).execute()
+
 def create_booking(request):
     if request.method == 'POST':
         form = BookingForm(data=request.POST)
@@ -220,6 +228,7 @@ def send_email(request, status, booking):
 def delete_booking(request, pk):
     booking = Booking.objects.get(id=pk)
     send_email(request, "deleted", booking)
+    delete_google_calendar_event(booking)
     booking.delete()
     return HttpResponseRedirect('/bookings/')
 
@@ -249,6 +258,7 @@ def reject_booking(request, pk):
     booking = Booking.objects.get(id=pk)
     booking.rejected = True
     booking.approved = False
+    delete_google_calendar_event(booking)
     booking.save()
     send_email(request, "rejected", booking)    
     return HttpResponseRedirect('/bookings/')

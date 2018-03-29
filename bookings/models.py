@@ -8,6 +8,7 @@ class Booking(models.Model):
     account = models.ForeignKey('authentication.Account', related_name='bookings', on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
+    googleCalendarEventId = models.CharField(max_length=50, blank=True)
 
     class Meta:
         ordering = ['start']

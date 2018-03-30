@@ -36,6 +36,8 @@ SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Calendar API (SAC Room Booking)'
 
+utc=pytz.UTC
+
 class BookingViewSet(viewsets.ModelViewSet):
     """
     List all bookings, create, retrieve, update
@@ -85,12 +87,12 @@ class BookingViewSet(viewsets.ModelViewSet):
 
 def get_conflicted_booking_or_false(booking):
 
-    start = booking.start
-    end = booking.end
+    start = booking.start.replace(tzinfo=utc)
+    end = booking.end.replace(tzinfo=utc)
     
     for _booking in Booking.objects.filter(room_id=booking.room_id, approved=True, rejected=False):
-        curr_start = _booking.start
-        curr_end = _booking.end
+        curr_start = _booking.start.replace(tzinfo=utc)
+        curr_end = _booking.end.replace(tzinfo=utc)
 
         if booking.id == _booking.id:
             continue

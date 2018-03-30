@@ -1,6 +1,7 @@
 {% extends 'roombooking/base.html' %}
 
-{% block content %}
-    <iframe src="https://calendar.google.com/calendar/embed?src=st49afvh9lm7us8qh06t1gokjg%40group.calendar.google.com&ctz=Asia%2FCalcutta" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-    {% include 'bookings/booking.html' with bookings=bookings title="All bookings" %}
+{% block calendar %}
+    <div id="calendar"></div>
+
+    <!-- <iframe src="https://calendar.google.com/calendar/embed?src=st49afvh9lm7us8qh06t1gokjg%40group.calendar.google.com&ctz=Asia%2FCalcutta" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe> -->
 {% endblock %}

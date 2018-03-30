@@ -4,13 +4,27 @@
 <head>
     <title>SAC Room Booking</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css' rel='stylesheet' />
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.print.css' rel='stylesheet' media='print' />
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src='http://momentjs.com/downloads/moment.js'></script>
+    <script src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js'></script>
+
+    <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <style>
+        
+        #calendar {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
         #user-info {
             margin-top: 20px;
             padding-left: 15px;
@@ -36,47 +50,87 @@
             font-size: 2em;
             padding-left: 10px;
         }
+        .font-awesome {
+            font-size: 1.5em;
+            margin: 0 10px;
+        }
     </style>
+    <script>
+            $(document).ready(function() {
+                // $('select').formSelect();
+                $('#calendar').fullCalendar({
+                    themeSystem: 'bootstrap4',
+                    header: {
+                      left: 'prev,next today',
+                      center: 'title',
+                      right: 'month,agendaWeek,agendaDay,listMonth'
+                    },
+                    weekNumbers: true,
+                    eventLimit: true, // allow "more" link when too many events
+                    events: '/api/bookings'
+                  });
+            });
+        </script>
 </head>
 
 <body>
-    <nav class="nav-extended">
-        <div class="nav-logo">
-            SAC Room Booking Portal           
-        </div>       
-        <div class="nav-wrapper">
-            <ul id="nav-mobile" class="right">
-                {% if user.is_authenticated%}
-                    <li><a href="{% url 'authentication:logout' %}">Logout</a></li> 
-                    {% if not user.is_admin and user.is_verified  %}
-                        <li><a href="{% url 'bookings:create-booking' %}">Create Booking</a></li>               
-                    {% endif %}    
-                    <li><a href="{% url 'bookings:show-bookings' %}">Bookings</a></li>
-                    <li><a href="{% url 'home' %}">Hello, {{ user.name }}</a></li>
-                {% else %}
-                    <li><a href="{% url 'authentication:login' %}">Login</a></li>
-                    <li><a href="{% url 'authentication:signup' %}">Signup</a></li>
-                {% endif %}
-            </ul>   
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">SAC Room Booking</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            {% if not user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'authentication:signup' %}">Signup</a>
+                </li>
+            {% else %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                {% if not user.is_admin and user.is_verified  %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'bookings:create-booking' %}">Create Booking</a>
+                    </li>               
+                {% endif %}    
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'bookings:show-bookings' %}">Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'authentication:logout' %}">Logout</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Hello, {{ user.name }}</a>
+                </li>
+            {% endif %}
+            </ul>
+            {% if not user.is_authenticated %}
+                <form class="form-inline my-2 my-lg-0" method="POST" action="{% url 'authentication:login' %}">
+                    {% csrf_token %}
+                    <input class="form-control mr-sm-2" type="email" name="email" required maxlength="30" id="id_email" placeholder="Email">
+                    <input class="form-control mr-sm-2" type="password" name="password" required maxlength="30" id="id_password" placeholder="Password">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+                </form>
+            {% endif %}
         </div>
     </nav>
+
+    {% if user.is_authenticated and not user.is_verified %}
+        <div class="col alert alert-primary">
+            Your account is pending verification.
+        </div>
+    {% endif %}
+
+
+    {% block calendar %}
+    {% endblock %}
       
     <div class="container">
-        {% if user.is_authenticated and not user.is_verified %}
-            <div class="row">
-                <div class="col s12">
-                    <h5>Your account is pending verification.</h5>
-                </div>
-            </div>    
-        {% endif %}
         {% block content %}
         {% endblock %}
     </div>
 </body>
 
-<script>
-    $(document).ready(function() {
-        $('select').formSelect();
-    });
-</script>
 </html>

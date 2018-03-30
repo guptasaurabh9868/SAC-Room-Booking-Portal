@@ -18,15 +18,15 @@
             </p>
             {% if user.is_admin %}
                 <a href="/bookings/approve/{{booking.id}}" style="color: rgb(117, 117, 117);">
-                    <i class="material-icons">done</i>
+                    <i class="fas fa-check font-awesome"></i>
                 </a>
                 <a href="/bookings/reject/{{booking.id}}" style="color: rgb(117, 117, 117);">
-                    <i class="material-icons">clear</i>
+                    <i class="fas fa-times font-awesome"></i>
                 </a>
             {% endif %}
             {% if user == booking.account or user.is_admin %}
                 <a href="/bookings/delete/{{booking.id}}" style="color: rgb(117, 117, 117);">
-                    <i class="material-icons">delete</i>
+                    <i class="fas fa-trash font-awesome"></i>
                 </a>
             {% endif %}
         </li>

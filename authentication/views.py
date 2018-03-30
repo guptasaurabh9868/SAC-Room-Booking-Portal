@@ -105,7 +105,7 @@ def activate(request, uidb64, token):
         return HttpResponse('Activtion link is invalid!')
 
 def account_login(request):
-    if request.POST:
+    if request.method == "POST":
         form = AccountLoginForm(request.POST)
         if form.is_valid():
             account = form.cleaned_data

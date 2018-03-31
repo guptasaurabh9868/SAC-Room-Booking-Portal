@@ -6,8 +6,9 @@ class Booking(models.Model):
     end = models.DateTimeField()
     room_id = models.ForeignKey('rooms.Room', related_name='bookings', on_delete=models.CASCADE)
     account = models.ForeignKey('authentication.Account', related_name='bookings', on_delete=models.CASCADE)
-    approved = models.BooleanField(default=False)
-    rejected = models.BooleanField(default=False)
+    status = models.IntegerField(default=0) # 0 - Pending approval, 1 - Approved, 2 - Rejected
+    # approved = models.BooleanField(default=False)
+    # rejected = models.BooleanField(default=False)
     googleCalendarEventId = models.CharField(max_length=50, blank=True)
 
     class Meta:

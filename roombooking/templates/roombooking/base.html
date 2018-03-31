@@ -25,31 +25,6 @@
             margin: 40px auto;
         }
 
-        #user-info {
-            margin-top: 20px;
-            padding-left: 15px;
-            border: 1px gray solid;
-            border-radius: 15px;
-            height: 70px;
-        }
-        #user-info h4 {
-            border-right: 1px gray solid;
-        }
-        .inline-icon {
-            vertical-align: bottom;
-            font-size: 18px !important;
-        }
-        .follow i {
-            margin-top: 13px;
-            font-size: 40px;
-        }
-        .followers {
-            margin-top: 23px;
-        }
-        .nav-logo {
-            font-size: 2em;
-            padding-left: 10px;
-        }
         .font-awesome {
             font-size: 1.5em;
             margin: 0 10px;
@@ -69,6 +44,8 @@
                     eventLimit: true, // allow "more" link when too many events
                     events: '/api/bookings'
                   });
+                
+                $('#id_room_id').addClass('form-control');
             });
         </script>
 </head>
@@ -127,7 +104,7 @@
     {% block calendar %}
     {% endblock %}
       
-    <div class="container">
+    <div class="container-fluid">
         {% block content %}
         {% endblock %}
     </div>

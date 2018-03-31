@@ -230,7 +230,7 @@ def send_email(request, status, booking):
 def delete_booking(request, pk):
     booking = Booking.objects.get(id=pk)
     send_email(request, "deleted", booking)
-    delete_google_calendar_event(booking)
+    # delete_google_calendar_event(booking)
     booking.delete()
     return HttpResponseRedirect('/bookings/')
 
@@ -244,7 +244,7 @@ def approve_booking(request, pk):
 
     booking.approved = True
     booking.rejected = False
-    create_calendar_event(booking)
+    # create_calendar_event(booking)
     booking.save()
     send_email(request, "approved", booking)  
  
@@ -260,7 +260,7 @@ def reject_booking(request, pk):
     booking = Booking.objects.get(id=pk)
     booking.rejected = True
     booking.approved = False
-    delete_google_calendar_event(booking)
+    # delete_google_calendar_event(booking)
     booking.save()
     send_email(request, "rejected", booking)    
     return HttpResponseRedirect('/bookings/')

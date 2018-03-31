@@ -7,7 +7,7 @@ class BookingSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField('set_title')
 
     def set_title(self, booking):
-        return str(booking.room_id)
+        return str(booking.room_id) + ' - ' + booking.account.name
 
     class Meta:
         model = Booking

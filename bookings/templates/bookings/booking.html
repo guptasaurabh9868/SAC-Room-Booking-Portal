@@ -12,9 +12,9 @@
             <b>To:</b> {{ booking.end|date:"M d, Y g:m A"}} <br>
             <b>Room:</b> {{ booking.room_id }} <br>
             <b>Status:</b>
-            {% if booking.rejected %} Rejected 
-            {% elif booking.approved %} Approved 
-            {% else %} Pending Approval 
+            {% if booking.status == 0 %} Pending Approval 
+            {% elif booking.status == 1 %} Approved 
+            {% else %} Rejected 
             {% endif %}
         </p>
     </div>

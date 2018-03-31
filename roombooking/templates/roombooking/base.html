@@ -29,6 +29,10 @@
             font-size: 1.5em;
             margin: 0 10px;
         }
+
+        .card {
+            margin: 10px 0;
+        }
     </style>
     <script>
             $(document).ready(function() {
@@ -42,7 +46,7 @@
                     },
                     weekNumbers: true,
                     eventLimit: true, // allow "more" link when too many events
-                    events: '/api/bookings'
+                    events: '/api/bookings/approved/'
                   });
                 
                 $('#id_room_id').addClass('form-control');
@@ -73,7 +77,9 @@
                     </li>               
                 {% endif %}    
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'bookings:show-bookings' %}">Bookings</a>
+                    <a class="nav-link" href="{% url 'bookings:show-bookings' %}">
+                        Bookings <span class="badge badge-secondary">{{ total_bookings }}</span>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'authentication:logout' %}">Logout</a>

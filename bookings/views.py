@@ -9,7 +9,7 @@ from rest_framework import permissions
 from bookings.permissions import IsOwnerOrReadOnly
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import list_route
 from rest_framework import status
 import dateutil.parser
 import pytz
@@ -83,6 +83,12 @@ class BookingViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             return self.check_date_range_conflict(request, serializer)
 
+    @list_route(methods=['get'], url_path='approved')
+    def approved(self, request):
+        approved_bookings = Booking.objects.filter(status=1)
+        serializer = BookingSerializer(approved_bookings, many=True)
+        return Response(serializer.data)
+
     # TODO: Implement method to update booking dates
 
 def get_conflicted_booking_or_false(booking):
@@ -90,7 +96,7 @@ def get_conflicted_booking_or_false(booking):
     start = booking.start.replace(tzinfo=utc)
     end = booking.end.replace(tzinfo=utc)
     
-    for _booking in Booking.objects.filter(room_id=booking.room_id, approved=True, rejected=False):
+    for _booking in Booking.objects.filter(room_id=booking.room_id, status=1):
         curr_start = _booking.start.replace(tzinfo=utc)
         curr_end = _booking.end.replace(tzinfo=utc)
 
@@ -242,8 +248,7 @@ def approve_booking(request, pk):
     if _booking != False:
         return HttpResponseRedirect('/bookings/conflict?id1=' + str(booking.id) + '&id2=' + str(_booking.id))
 
-    booking.approved = True
-    booking.rejected = False
+    booking.status = 1
     # create_calendar_event(booking)
     booking.save()
     send_email(request, "approved", booking)  
@@ -258,8 +263,7 @@ def booking_conflict(request):
 
 def reject_booking(request, pk):
     booking = Booking.objects.get(id=pk)
-    booking.rejected = True
-    booking.approved = False
+    booking.status = 2
     # delete_google_calendar_event(booking)
     booking.save()
     send_email(request, "rejected", booking)    

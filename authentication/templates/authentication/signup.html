@@ -2,12 +2,28 @@
 
 {% block content %}
 <div class="row">
-    <div class="col s6">
+    <div class="col-md-4 offset-md-2">
         <form method="POST">
-            {% csrf_token %} {{ form.as_p }}
-
-            <button class="btn waves-effect waves-light" type="submit" name="action">Signup
-                <i class="material-icons right">send</i>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_email">Email:</label> 
+                <input type="email" class="form-control" name="email" required id="id_email" maxlength="30" />
+            </div>
+            <div class="form-group">
+                <label for="id_name">Name:</label> 
+                <input type="name" class="form-control" name="name" required id="id_name" maxlength="30" />
+            </div>
+            <div class="form-group">
+                <label for="id_username">Username:</label> 
+                <input type="text" class="form-control" name="username" required id="id_username" maxlength="30" />
+            </div>
+            <div class="form-group">
+                <label for="id_password">Password:</label> 
+                <input type="password" class="form-control" name="password" required id="id_password" maxlength="30" />
+            </div>
+    
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="action">
+                Signup
             </button>
         </form>
     </div>
